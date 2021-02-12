@@ -1,10 +1,17 @@
 import parse_csv from "../vr-cinema/src/csv.js";
 import * as utils from "./vr-cinema/src/utils.js";
 
-export default function cinema_treki( parent,name ) {
+export function setup( vz ) {
+  vz.addItemType( "cinema-view-treki","Cinema: treki", function( opts ) {
+    return create( vz, opts );
+  } );
+}
 
-  var obj = parent.vz.create_obj( {}, {parent:parent, name:name} );
-  var gr  = parent.vz.vis.addPoints( obj, "points" );
+export function create( vz, opts ) {
+
+  var obj = vz.createObj( opts );
+
+  var gr  = vz.vis.addPoints( obj, "points" );
   gr.color=[1,1,1];
   gr.radius = 1.25;
 
@@ -18,8 +25,10 @@ export default function cinema_treki( parent,name ) {
 
   function move() {
       var selection_hash = {};
-      var vals = obj.getParam("N");
+      var vals = obj.getParam("N") || "";
       vals.toString().split(/[\s,;]+/).forEach(function(v) { selection_hash[v]=1; } );
+      // if (Object.keys(selection_hash).length == 0) selection_hash["all"] = 1;
+
       var dat = obj.getParam("@dat");
       var fil = function(arr) {
         return simplefilterbynums( dat.N, arr, selection_hash );
@@ -35,7 +44,7 @@ export default function cinema_treki( parent,name ) {
 
 function simplefilterbynums( num_array, data_array, selection_hash )
 {
-  if (selection_hash.all) return data_array;
+  if (selection_hash.all || selection_hash[""]) return data_array;
   var acc = [];
   for (var i=0; i<data_array.length; i++) {
     if (selection_hash[ num_array[i] ])
