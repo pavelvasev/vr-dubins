@@ -4,7 +4,7 @@ import * as utils from "./vr-cinema/src/utils.js";
 export default function cinema_treki( parent,name ) {
 
   var obj = parent.vz.create_obj( {}, {parent:parent, name:name} );
-  var gr  = parent.vz.vis.addPoints( obj, "treki" );
+  var gr  = parent.vz.vis.addPoints( obj, "points" );
   gr.color=[1,1,1];
   gr.radius = 1.25;
 

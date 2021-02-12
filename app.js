@@ -17,7 +17,9 @@ export function create( vz, opts ) {
   var autoscale = vz.createObjByType( {type: "auto_scale",parent:obj} );
 
   obj.addViewType( "treki",treki_func );
-  obj.setParam("file","https://viewlang.ru/dubins/data/123/data.csv");
+  //obj.setParam("file","https://viewlang.ru/dubins/data/123/data.csv");
+  //obj.setParam("file",vz.getDir(import.meta.url)+"./data.csv");
+  obj.setParam("file","https://viewlang.ru/dubins/data/data.csv");
   
   // subscribe to obj data loaded -> autoscale
 
