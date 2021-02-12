@@ -1,0 +1,3 @@
+[submodule "vr-cinema"]
+	path = vr-cinema
+	url = git@github.com:viewzavr/vr-cinema.git

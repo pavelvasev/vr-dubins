@@ -1,36 +1,25 @@
-// A Viewzavr package is a javascript module. It may do anything, and beside that
-// there are following special functions may be exported:
-// * setup, which is called when package is loaded
-// * create, which is called to create scene when vzPlayer.loadApp function is called.
+import treki_func from "./treki.js";
 
-// setup function may register components in types table, which is used by player's visual interface
-// and by Viewzavr.createObjByType function.
 export function setup( vz ) {
-  vz.addItemType( "my-test-component-type-id","My test component", function( opts ) {
+  vz.addItemType( "dubins-cinema-viewer","Dubins cinema viewer", function( opts ) {
     return create( vz, opts );
   } );
+  
+  vzPlayer.loadPackageByCode( "vis-comps" );
+
+  return vzPlayer.loadPackage( vz.getDir(import.meta.url)+"./vr-cinema/src/cinema-viewzavr.js" );
 }
 
 // create function should return Viewzavr object
 export function create( vz, opts ) {
-  opts.name ||= "demoscene";
-  var obj = vz.createObj( opts );
-
-  var pts = vz.vis.addPoints( obj );
-  pts.positions = [1,2,3, 1,2,5, 1,3,12];
-
-  var lins = vz.vis.addLines( obj );
-  lins.positions = [1,2,3, 1,2,5, 1,2,5, 1,3,12];
+  var obj = vz.createObjByType( Object.assign( {},opts,{type: "cinema-viewer",name:"dubins-cinema-viewer"} ) );
   
-  obj.addCmd( "click", function() {
-    obj.signalTracked( "r" );
-  });
-  obj.addSlider("r",10,0,100,1,function() {
-    var acc = []; var r = obj.getParam("r");
-    for (var i=0; i<100; i++) acc.push( r*(Math.random()-0.5),r*(Math.random()-0.5),r*(Math.random()-0.5) );
-    pts.positions = acc;
-    lins.positions = acc;
-  } );
+  var autoscale = vz.createObjByType( {type: "auto_scale",parent:obj} );
+
+  obj.addViewType( "treki",treki_func );
+  obj.setParam("file","https://viewlang.ru/dubins/data/123/data.csv");
+  
+  // subscribe to obj data loaded -> autoscale
 
   return obj;
 }
