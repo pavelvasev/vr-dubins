@@ -23,6 +23,16 @@ export function create( vz, opts ) {
   //obj.setParam("file",vz.getDir(import.meta.url)+"./data.csv");
   obj.setParam("file","https://viewlang.ru/dubins/data/data.csv");
   
+  // P9 requirement. Somewhere here we see that we need feature-based layers.
+  feature_autoScaleOnGrowOnce( obj, autoscale );
+  
+  // subscribe to obj data loaded -> autoscale
+
+  return obj;
+}
+
+// feature
+function feature_autoScaleOnGrowOnce( obj, autoscale ) {
   var autoscaled=false;
   obj.findRoot().trackParam("cliprange", function(v) {
     v = v.detail; // todo мы это переделаем на просто значение параметра.
@@ -32,8 +42,4 @@ export function create( vz, opts ) {
       autoscaled=true;
     }
   });
-  
-  // subscribe to obj data loaded -> autoscale
-
-  return obj;
 }
