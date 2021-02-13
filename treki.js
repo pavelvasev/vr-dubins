@@ -27,24 +27,32 @@ export function create( vz, opts ) {
 
   obj.trackParam( "@dat",function(v) {
     var dat = obj.getParam("@dat");
-    //obj.addCombo( "N","all",["all"].concat( getdiffvalues(dat.N) ),move );
-    obj.addText( "N","",move );
-    obj.addLabel( "N-values",getdiffvalues(dat.N).toString() );
+    // obj.addCombo( "N","all",["all"].concat( getdiffvalues(dat.N) ),move );
+    // obj.addText( "N","",move );
+    obj.setParam( "N-values",getdiffvalues(dat.N).toString() );
     move();
   });
 
   function move() {
+
       var selection_hash = {};
       var vals = obj.getParam("N") || "";
       vals.toString().split(/[\s,;]+/).forEach(function(v) { selection_hash[v]=1; } );
       // if (Object.keys(selection_hash).length == 0) selection_hash["all"] = 1;
 
       var dat = obj.getParam("@dat");
+      if (!dat) return;
+      
       var fil = function(arr) {
         return simplefilterbynums( dat.N, arr, selection_hash );
       }
       gr.positions = utils.combine( [fil(dat.X), fil(dat.Y), fil(dat.Fi) ] );
   }
+  
+  obj.addText( "N","",move );
+  obj.addLabel( "N-values","" );
+
+  addSendNFeature( obj );
 
   utils.file_merge_feature( obj,parse_csv, utils.interp_csv, "@dat" );
 
@@ -69,4 +77,28 @@ function getdiffvalues(arr) {
     a[ arr[i] ] = 1;
   //return ["---"].concat( Object.keys( a ).sort() );
   return Object.keys( a ).sort( function (a, b) {  return a - b;  } ); // сортировка чисел, просто .sort() им мало
+}
+
+
+//////////////// feature
+
+
+// it looks like this feature is compound of two features
+// 1) activate feature 2 by checkbox,
+// 2) send parameter to neighbours
+function addSendNFeature( obj ) {
+  obj.addCheckbox( "share-N",true );
+  
+  obj.trackParam( "N", function() {
+    if (!obj.getParam( "share-N" )) return;
+    
+    obj.ns.parent.ns.getChildNames().forEach( function(name) {
+      if (name.indexOf("treki") >= 0) {
+        var o2 = obj.ns.parent.ns.getChildByName( name );
+        if (o2 != obj) {
+          o2.setParam( "N", obj.getParam("N") );
+        }
+      }
+    });
+  });
 }
