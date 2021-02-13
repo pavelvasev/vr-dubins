@@ -23,6 +23,16 @@ export function create( vz, opts ) {
   //obj.setParam("file",vz.getDir(import.meta.url)+"./data.csv");
   obj.setParam("file","https://viewlang.ru/dubins/data/data.csv");
   
+  var autoscaled=false;
+  obj.findRoot().trackParam("cliprange", function(v) {
+    v = v.detail; // todo мы это переделаем на просто значение параметра.
+    if (v > 500 && !autoscaled) {
+      console.log("AUTO-SCALING ONE TIME");
+      autoscale.signalTracked("Auto-scale");
+      autoscaled=true;
+    }
+  });
+  
   // subscribe to obj data loaded -> autoscale
 
   return obj;
