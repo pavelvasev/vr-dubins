@@ -12,8 +12,18 @@ export function create( vz, opts ) {
   var obj = vz.createObj( opts );
 
   var gr  = vz.vis.addPoints( obj, "points" );
-  gr.color=[1,1,1];
-  gr.radius = 1.25;
+  gr.setParam("shape",2);  
+  
+  // P1 requirement
+  if ((opts.name || "").indexOf("current") >= 0) {
+    gr.setParam("color",[1,1,0]);
+    gr.setParam("radius",5.5);
+  }
+  else
+  {
+    gr.setParam("color",[1,0,0]);
+    gr.setParam("radius",2.4);
+  }
 
   obj.trackParam( "@dat",function(v) {
     var dat = obj.getParam("@dat");
